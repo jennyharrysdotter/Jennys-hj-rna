@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#f7f4ef"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Jennys Hjärna"/>
+  <title>Jennys Hjärna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --gold: #8a6d35;
+      --gold-mid: #c4a05a;
+      --gold-pale: #f0e8d4;
+      --gold-border: #ddd0b0;
+      --ink: #1c1a16;
+      --ink-mid: #4a4438;
+      --ink-faint: #9a9080;
+      --surface: #faf8f3;
+      --bg: #f7f4ef;
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      background: var(--bg);
+      font-family: 'Lora', serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+
+    .app {
+      display: flex; flex-direction: column;
+      height: 100vh;
+      max-width: 600px; margin: 0 auto;
+      background: var(--surface);
+      border-left: 1px solid var(--gold-border);
+      border-right: 1px solid var(--gold-border);
+      padding-top: var(--sat);
+      padding-bottom: var(--sab);
+    }
+
+    /* Header */
+    .header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .logo { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; }
+    .logo em { color: var(--gold); font-style: italic; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .subline { font-size: 9px; letter-spacing: 2px; color: var(--ink-faint); margin-top: 3px; }
+    .pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 2px;
+      padding: 4px 11px; border-radius: 20px;
+      border: 1px solid var(--gold-border);
+      color: var(--ink-faint);
+      transition: all .3s;
+    }
+    .pill.live { border-color: var(--gold-mid); color: var(--gold); background: var(--gold-pale); }
+
+    /* Main */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Idle */
+    .idle {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+      padding: 40px 24px;
+    }
+    .mic-ring {
+      position: relative;
+      width: 96px; height: 96px;
+    }
+    .mic-ring::before {
+      content: '';
+      position: absolute; inset: -12px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-border);
+      animation: ring-idle 3s ease-in-out infinite;
+    }
+    @keyframes ring-idle {
+      0%, 100% { transform: scale(1); opacity: .5; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+    .mic-btn {
+      width: 96px; height: 96px; border-radius: 50%;
+      background: var(--gold-pale);
+      border: 1.5px solid var(--gold-mid);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      position: relative; z-index: 1;
+    }
+    .mic-btn:active { transform: scale(.94); background: var(--gold-border); }
+    .mic-btn svg { width: 34px; height: 34px; fill: var(--gold); }
+    .idle-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--ink-faint); text-align: center; }
+
+    /* Recording */
+    .recording { flex: 1; display: flex; flex-direction: column; }
+    .rec-bar {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex; align-items: center; gap: 14px;
+      flex-shrink: 0;
+    }
+    .rec-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #c0392b;
+      animation: blink 1s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+    .timer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px; font-weight: 300; letter-spacing: 4px;
+    }
+    .stop-btn {
+      margin-left: auto;
+      background: var(--ink); border: none;
+      color: var(--surface);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 2px;
+      padding: 9px 18px; border-radius: 4px;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .stop-btn:active { opacity: .7; }
+    .live-text {
+      flex: 1; overflow-y: auto;
+      padding: 20px 22px;
+      font-size: 15px; line-height: 1.9;
+      color: var(--ink-mid);
+    }
+    .cursor { color: var(--gold-mid); animation: blink .9s infinite; }
+
+    /* Done */
+    .done { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .done-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .done-title { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; color: var(--ink-faint); }
+    .done-actions { display: flex; gap: 8px; }
+
+    .btn-outline {
+      background: none;
+      border: 1px solid var(--gold-border);
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 1.5px;
+      color: var(--ink-mid);
+      padding: 7px 13px; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-outline:active { background: var(--gold-pale); border-color: var(--gold-mid); color: var(--gold); }
+
+    .btn-gold {
+      background: var(--gold);
+      border: none; border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 1.5px;
+      color: #fff; padding: 7px 13px;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .btn-gold:active { opacity: .8; }
+
+    .transcript-area {
+      flex: 1; overflow-y: auto;
+      padding: 20px 22px;
+      font-size: 14px; line-height: 1.9;
+      color: var(--ink-mid);
+      white-space: pre-wrap;
+    }
+
+    /* Copy feedback */
+    .toast {
+      position: fixed; bottom: calc(var(--sab) + 24px); left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: var(--surface);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px;
+      padding: 10px 20px; border-radius: 20px;
+      opacity: 0; transition: opacity .3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    /* Instruction box */
+    .instruction {
+      margin: 0 22px 0;
+      padding: 14px 16px;
+      background: var(--gold-pale);
+      border: 1px solid var(--gold-border);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      flex-shrink: 0;
+    }
+    .instruction p {
+      font-size: 12px; line-height: 1.7; color: var(--ink-mid);
+    }
+    .instruction strong { color: var(--gold); font-weight: 500; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fadein { animation: fadeUp .35s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="logo">Jennys <em>Hjärna</em></div>
+      <div class="subline mono">TRANSKRIBERING</div>
+    </div>
+    <div id="pill" class="pill">REDO</div>
+  </div>
+
+  <div class="main" id="main">
+
+    <!-- IDLE -->
+    <div id="stageIdle" class="idle">
+      <div class="mic-ring">
+        <button class="mic-btn" onclick="startRecording()" aria-label="Starta inspelning">
+          <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-6 10a6 6 0 0 0 12 0h2a8 8 0 0 1-7 7.93V21h2v2H9v-2h2v-2.07A8 8 0 0 1 4 11h2z"/></svg>
+        </button>
+      </div>
+      <div class="idle-hint">TRYCK FÖR ATT STARTA MÖTET</div>
+    </div>
+
+    <!-- RECORDING -->
+    <div id="stageRecording" class="recording" style="display:none">
+      <div class="rec-bar">
+        <div class="rec-dot"></div>
+        <div class="timer mono" id="timer">00:00</div>
+        <button class="stop-btn" onclick="stopRecording()">STOPPA</button>
+      </div>
+      <div class="live-text" id="liveText">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--ink-faint)">Lyssnar...<span class="cursor">|</span></span>
+      </div>
+    </div>
+
+    <!-- DONE -->
+    <div id="stageDone" class="done" style="display:none">
+      <div class="done-header">
+        <div class="done-title">TRANSKRIPT</div>
+        <div class="done-actions">
+          <button class="btn-outline" onclick="resetApp()">NYTT MÖTE</button>
+          <button class="btn-gold" onclick="copyText()">KOPIERA</button>
+        </div>
+      </div>
+      <div class="instruction fadein">
+        <p>Tryck <strong>KOPIERA</strong> och klistra sedan in texten i <strong>Claude.ai</strong> för analys. Skriv t.ex. <strong>"Analysera detta möte"</strong> och klistra in.</p>
+      </div>
+      <div class="transcript-area fadein" id="transcriptArea"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">KOPIERAT ✓</div>
+
+<script>
+  let recognition, timerInterval, elapsed = 0;
+  let fullText = '', interimText = '';
+
+  function show(stage) {
+    ['Idle','Recording','Done'].forEach(s => {
+      document.getElementById('stage'+s).style.display = s === stage ? 'flex' : 'none';
+    });
+  }
+
+  function startRecording() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Mikrofon stöds inte. Använd Chrome på Android eller Safari på iPhone.'); return; }
+
+    fullText = ''; interimText = '';
+    document.getElementById('liveText').innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:1px;color:var(--ink-faint)">Lyssnar...<span class="cursor">|</span></span>';
+
+    recognition = new SR();
+    recognition.lang = 'auto';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = e => {
+      let fin = '', int = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        e.results[i].isFinal
+          ? fin += e.results[i][0].transcript + ' '
+          : int += e.results[i][0].transcript;
+      }
+      fullText += fin;
+      interimText = int;
+      const display = fullText + interimText;
+      document.getElementById('liveText').innerHTML = display
+        ? display + '<span class="cursor">|</span>'
+        : '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:1px;color:var(--ink-faint)">Lyssnar...<span class="cursor">|</span></span>';
+    };
+
+    recognition.onerror = e => console.error(e.error);
+    recognition.onend = () => {
+      if (document.getElementById('stageRecording').style.display !== 'none') {
+        recognition.start();
+      }
+    };
+
+    recognition.start();
+    elapsed = 0;
+    document.getElementById('timer').textContent = '00:00';
+    timerInterval = setInterval(() => {
+      elapsed++;
+      const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const s = String(elapsed % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = m + ':' + s;
+    }, 1000);
+
+    show('Recording');
+    document.getElementById('pill').textContent = 'SPELAR IN';
+    document.getElementById('pill').classList.add('live');
+  }
+
+  function stopRecording() {
+    if (recognition) { recognition.onend = null; recognition.stop(); }
+    clearInterval(timerInterval);
+    const final = (fullText + interimText).trim();
+    if (!final) { resetApp(); return; }
+    document.getElementById('transcriptArea').textContent = final;
+    show('Done');
+    document.getElementById('pill').textContent = 'KLART';
+    document.getElementById('pill').classList.remove('live');
+  }
+
+  function copyText() {
+    const text = document.getElementById('transcriptArea').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    });
+  }
+
+  function resetApp() {
+    fullText = ''; interimText = '';
+    document.getElementById('pill').textContent = 'REDO';
+    document.getElementById('pill').classList.remove('live');
+    show('Idle');
+  }
+</script>
+</body>
+</html>
