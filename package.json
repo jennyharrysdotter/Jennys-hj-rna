@@ -1,0 +1,66 @@
+# Jennys Hjärna 🧠
+
+Realtidstranskribering · Mötesanalys · Systemtänk
+
+---
+
+## Deploy-guide (15 minuter)
+
+### 1. Skapa GitHub-repo
+
+Gå till github.com → New repository → Namnge det `jennys-hjarna` → Create
+
+### 2. Ladda upp koden
+
+Packa upp zip-filen och kör i terminalen:
+
+```bash
+cd jennys-hjarna
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/DITT-ANVÄNDARNAMN/jennys-hjarna.git
+git push -u origin main
+```
+
+### 3. Deploya på Vercel (gratis)
+
+1. Gå till **vercel.com** → logga in med GitHub
+2. Klicka **Add New → Project**
+3. Välj ditt `jennys-hjarna`-repo → Import
+4. Under **Environment Variables**, lägg till:
+   - Name: `VITE_ANTHROPIC_API_KEY`
+   - Value: din nyckel (sk-ant-...)
+5. Klicka **Deploy**
+
+Appen är live på t.ex. `jennys-hjarna.vercel.app` inom 1–2 minuter.
+
+### 4. Installera på iPhone
+
+1. Öppna din Vercel-URL i **Safari**
+2. Tryck dela-ikonen **⬆️** längst ned
+3. Välj **"Lägg till på hemskärmen"**
+4. Tryck **Lägg till** – klar!
+
+### 4b. Installera på Android
+
+1. Öppna URL:en i **Chrome**
+2. Tryck meny **⋮** → **"Lägg till på startskärmen"**
+
+---
+
+## API-nyckel
+
+Hämta på: **console.anthropic.com** → API Keys → Create Key
+
+Nyckeln sparas lokalt i webbläsaren. Du kan byta den via ⚙-knappen i appen.
+
+---
+
+## Hur appen fungerar
+
+1. **Tryck på mikrofonen** – mötet transkriberas i realtid
+2. **Tryck STOPPA** – Claude analyserar automatiskt med fyra linser
+3. **Bläddra** mellan Analys, Transkript och Chatt
+4. **Chatta** om mötet med följdfrågor
